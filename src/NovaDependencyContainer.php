@@ -59,11 +59,27 @@ class NovaDependencyContainer extends Field
      * @param $value
      * @return $this
      */
-    public function dependsOnArray($field, $array)
+    public function andDependsOnArray($field, $array)
     {
         return $this->withMeta([
             'dependencies' => array_merge($this->meta['dependencies'], [
-                array_merge($this->getFieldLayout($field),['array' => $array]),
+                array_merge($this->getFieldLayout($field),['array' => $array,'and' => true]),
+            ])
+        ]);
+    }
+
+    /**
+     * Adds a dependency
+     *
+     * @param $field
+     * @param $value
+     * @return $this
+     */
+    public function andDependsOn($field, $value)
+    {
+        return $this->withMeta([
+            'dependencies' => array_merge($this->meta['dependencies'], [
+                array_merge($this->getFieldLayout($field, $value),[ 'and' => true ])
             ])
         ]);
     }
@@ -207,6 +223,38 @@ class NovaDependencyContainer extends Field
                 }
             }
 
+        }
+
+        foreach ($this->meta['dependencies'] as $index => $dependency)
+        {
+            if(!array_key_exists('and', $dependency))
+            {
+                continue;
+            }
+
+            if (array_key_exists('empty', $dependency)) {
+                $this->meta['dependencies'][$index]['satisfied'] = empty($resource->{$dependency['property']});
+            }
+            // inverted `empty()`
+            if (array_key_exists('notEmpty', $dependency)) {
+                $this->meta['dependencies'][$index]['satisfied'] = !empty($resource->{$dependency['property']});
+            }
+            // inverted
+            if (array_key_exists('nullOrZero', $dependency)) {
+                $this->meta['dependencies'][$index]['satisfied'] = in_array($resource->{$dependency['property']}, [null, 0, '0'], true);
+            }
+
+            if (array_key_exists('not', $dependency)) {
+                $this->meta['dependencies'][$index]['satisfied'] = $resource->{$dependency['property']} != $dependency['not'];
+            }
+
+            if (array_key_exists('array', $dependency)) {
+                $this->meta['dependencies'][$index]['satisfied'] = in_array($resource->{$dependency['property']},$dependency['array']);
+            }
+
+            if (array_key_exists('value', $dependency)) {
+                $this->meta['dependencies'][$index]['satisfied'] = $dependency['value'] == $resource->{$dependency['property']};
+            }
         }
     }
 

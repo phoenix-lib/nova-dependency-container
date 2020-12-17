@@ -108,6 +108,42 @@
 
 			// @todo: align this method with the responsibility of updating the dependency, not verifying the dependency "values"
 			updateDependencyStatus() {
+
+        for (let dependency of this.field.dependencies)
+        {
+            // #93 compatability with flexible-content, which adds a generated attribute for each field
+            let dependencyValue = this.dependencyValues[(this.field.attribute + dependency.field)];
+            if (dependency.hasOwnProperty('empty')) {
+                this.dependenciesSatisfied = !dependencyValue;
+            }
+
+            if (dependency.hasOwnProperty('notEmpty')) {
+                this.dependenciesSatisfied = dependencyValue;
+            }
+
+            if (dependency.hasOwnProperty('nullOrZero')) {
+                this.dependenciesSatisfied = 1 < [undefined, null, 0, '0'].indexOf(dependencyValue) ;
+            }
+
+            if (dependency.hasOwnProperty('not')) {
+                this.dependenciesSatisfied = dependencyValue !== dependency.not;
+            }
+
+            if (dependency.hasOwnProperty('array')) {
+                this.dependenciesSatisfied = dependency.array.find(value => value == dependencyValue);
+            }
+
+            if (dependency.hasOwnProperty('value')) {
+                this.dependenciesSatisfied = dependencyValue == dependency.value;
+            }
+        }
+
+        if(this.dependenciesSatisfied)
+        {
+            return;
+        }
+
+
 				for (let dependency of this.field.dependencies) {
 
 					// #93 compatability with flexible-content, which adds a generated attribute for each field
@@ -133,8 +169,8 @@
 					}
 
           if (dependency.hasOwnProperty('array') && dependency.array.find(value => value == dependencyValue)) {
-            this.dependenciesSatisfied = true;
-            return;
+              this.dependenciesSatisfied = true;
+              return;
           }
 
 					if (dependency.hasOwnProperty('value') && dependencyValue == dependency.value) {
