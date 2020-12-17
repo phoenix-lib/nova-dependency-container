@@ -119,20 +119,45 @@
                 this.dependenciesSatisfied = !dependencyValue;
             }
 
+            if(!this.dependenciesSatisfied)
+            {
+                return;
+            }
+
             if (dependency.hasOwnProperty('notEmpty')) {
                 this.dependenciesSatisfied = dependencyValue;
+            }
+
+            if(!this.dependenciesSatisfied)
+            {
+                return;
             }
 
             if (dependency.hasOwnProperty('nullOrZero')) {
                 this.dependenciesSatisfied = 1 < [undefined, null, 0, '0'].indexOf(dependencyValue) ;
             }
 
+            if(!this.dependenciesSatisfied)
+            {
+                return;
+            }
+
             if (dependency.hasOwnProperty('not')) {
                 this.dependenciesSatisfied = dependencyValue !== dependency.not;
             }
 
+            if(!this.dependenciesSatisfied)
+            {
+                return;
+            }
+
             if (dependency.hasOwnProperty('array')) {
                 this.dependenciesSatisfied = dependency.array.find(value => value == dependencyValue);
+            }
+
+            if(!this.dependenciesSatisfied)
+            {
+                return;
             }
 
             if (dependency.hasOwnProperty('value')) {
