@@ -152,7 +152,7 @@
             }
 
             if (dependency.hasOwnProperty('array')) {
-                this.dependenciesSatisfied = dependency.array.find(value => value == dependencyValue);
+                this.dependenciesSatisfied = dependency.array.find(value => value == dependencyValue) !== undefined;
             }
 
             if(!this.dependenciesSatisfied)
