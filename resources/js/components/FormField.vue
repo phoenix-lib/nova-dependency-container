@@ -109,6 +109,8 @@
 			// @todo: align this method with the responsibility of updating the dependency, not verifying the dependency "values"
 			updateDependencyStatus() {
 
+        this.dependenciesSatisfied = true;
+
         for (let dependency of this.field.dependencies)
         {
             // #93 compatability with flexible-content, which adds a generated attribute for each field
@@ -138,7 +140,7 @@
             }
         }
 
-        if(this.dependenciesSatisfied)
+        if(!this.dependenciesSatisfied)
         {
             return;
         }
