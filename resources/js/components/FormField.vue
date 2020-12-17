@@ -132,6 +132,11 @@
 						return;
 					}
 
+          if (dependency.hasOwnProperty('array') && dependency.array.find(value => value == dependencyValue)) {
+            this.dependenciesSatisfied = true;
+            return;
+          }
+
 					if (dependency.hasOwnProperty('value') && dependencyValue == dependency.value) {
 						this.dependenciesSatisfied = true;
 						return;
